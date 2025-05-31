@@ -7,6 +7,48 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 1. **Phân loại giới tính** (Nam/Nữ) - `Gender1.h5`
 2. **Nhận diện cảm xúc** (Bình thường, Vui vẻ, Buồn, Ngạc nhiên, Tức giận) - `Emotion1.h5`
 
+## Bộ dữ liệu (Dataset) sử dụng
+
+### 1. Dataset cho Nhận diện Cảm xúc
+
+**Nguồn**: FER-2013 (Facial Expression Recognition 2013) từ Kaggle
+
+- **Link**: https://www.kaggle.com/datasets/msambare/fer2013
+- **Mô tả**: Bộ dữ liệu chứa khoảng 30,000 ảnh khuôn mặt grayscale kích thước 48x48 pixel
+- **Phân loại**: 7 loại cảm xúc (Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise)
+- **Cấu trúc**:
+  - Training set: ~28,000 ảnh
+  - Test set: ~7,000 ảnh
+- **Đặc điểm**: Ảnh được thu thập từ nhiều nguồn khác nhau, đa dạng về độ tuổi, giới tính, và điều kiện ánh sáng
+
+### 2. Dataset cho Phân loại Giới tính
+
+**Nguồn**: Gender Classification Dataset từ Kaggle
+
+- **Link**: https://www.kaggle.com/datasets/cashutosh/gender-classification-dataset
+- **Mô tả**: Bộ dữ liệu chứa hình ảnh khuôn mặt đã được cắt và làm sạch
+- **Phân loại**: 2 lớp (Male, Female)
+- **Cấu trúc**:
+  - Thư mục "man": Chứa ảnh khuôn mặt nam
+  - Thư mục "woman": Chứa ảnh khuôn mặt nữ
+- **Tổng số**: Khoảng 47,000+ ảnh
+- **Đặc điểm**: Ảnh đã được tiền xử lý, cắt và căn chỉnh khuôn mặt
+
+### 3. Tiền xử lý dữ liệu
+
+#### Cho mô hình Emotion:
+
+- **Resize**: Từ 48x48 → 150x150 pixels
+- **Color conversion**: Grayscale → RGB (duplicate channels)
+- **Normalization**: Pixel values từ [0-255] → [0-1]
+- **Data Augmentation**: Rotation, shift, zoom, flip
+
+#### Cho mô hình Gender:
+
+- **Input size**: 150x150x3 (RGB)
+- **Normalization**: Pixel values từ [0-255] → [0-1]
+- **Data Augmentation**: Rotation, shift, zoom, flip
+
 ## Kiến trúc mô hình CNN
 
 ### 1. Mô hình Phân loại Giới tính (Gender Classification)
