@@ -24,7 +24,8 @@ gender_model = load_model('Gender1.h5', compile=False)  # Mô hình nhận diệ
 emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận diện cảm xúc
 
 # Nhãn cho giới tính và cảm xúc (sử dụng tiếng Anh)
-gender_labels = ['Male', 'Female']
+# Lưu ý: Thứ tự phải khớp với class_indices của TensorFlow (female=0, male=1)
+gender_labels = ['Female', 'Male']
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Tạo cửa sổ tkinter chính
