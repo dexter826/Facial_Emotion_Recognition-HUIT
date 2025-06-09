@@ -39,13 +39,13 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 #### Cho mô hình Emotion (AFFECTNET):
 
-- **Input size**: 96x96x3 (RGB) - kích thước gốc của dataset
+- **Input size**: 150x150x3 (RGB) - cập nhật để tăng độ chính xác
 - **Normalization**: Pixel values từ [0-255] → [0-1]
-- **Data Augmentation**: Rotation (15°), shift (0.1), zoom (0.1), horizontal flip
+- **Data Augmentation**: Rotation (20°), shift (0.2), shear (0.2), zoom (0.2), horizontal flip
 
 #### Cho mô hình Gender:
 
-- **Input size**: 96x96x3 (RGB) - cập nhật để tương thích
+- **Input size**: 150x150x3 (RGB) - cập nhật để tương thích
 - **Normalization**: Pixel values từ [0-255] → [0-1]
 - **Data Augmentation**: Rotation (20°), shift (0.2), zoom (0.2), horizontal flip
 
@@ -56,7 +56,7 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 #### Cấu trúc mạng:
 
 ```
-Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
+Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Conv2D(32 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Conv2D(64 filters, 3x3) + ReLU
@@ -76,7 +76,7 @@ Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
 #### Cấu trúc mạng:
 
 ```
-Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
+Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Conv2D(32 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Conv2D(64 filters, 3x3) + ReLU

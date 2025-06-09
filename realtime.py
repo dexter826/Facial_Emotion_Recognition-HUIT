@@ -25,7 +25,7 @@ emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận di�
 
 # Nhãn cho giới tính và cảm xúc (sử dụng tiếng Anh)
 # Lưu ý: Thứ tự phải khớp với class_indices của TensorFlow (female=0, male=1)
-gender_labels = ['Female', 'Male']
+gender_labels = ['female', 'male']  # Khớp với class_indices trong model
 # Cập nhật cho dataset AFFECTNET với 5 cảm xúc chính
 emotion_labels = ['Anger', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
@@ -126,10 +126,12 @@ def update_result_panel():
             emotion_value.config(fg="#f1c40f")  # Vàng cho vui vẻ
         elif result_data['emotion'] == 'Sad':
             emotion_value.config(fg="#3498db")  # Xanh dương cho buồn
-        elif result_data['emotion'] == 'Angry':
+        elif result_data['emotion'] == 'Anger':
             emotion_value.config(fg="#e74c3c")  # Đỏ cho tức giận
         elif result_data['emotion'] == 'Surprise':
             emotion_value.config(fg="#9b59b6")  # Tím cho ngạc nhiên
+        elif result_data['emotion'] == 'Neutral':
+            emotion_value.config(fg="#95a5a6")  # Xám cho bình thường
         else:
             emotion_value.config(fg=TEXT_COLOR)  # Màu mặc định
             
@@ -185,7 +187,7 @@ def camera_worker():
                 continue
 
             # Tiền xử lý khuôn mặt cho việc dự đoán
-            face_crop = cv2.resize(face_crop, (96, 96))  # Sử dụng kích thước mới (96x96)
+            face_crop = cv2.resize(face_crop, (150, 150))  # Sử dụng kích thước 150x150
             face_crop = face_crop.astype("float") / 255.0  # Chuẩn hóa pixel về [0,1]
             face_crop = img_to_array(face_crop)            # Chuyển đổi thành array
             face_crop = np.expand_dims(face_crop, axis=0)  # Thêm batch dimension
@@ -226,10 +228,12 @@ def camera_worker():
                 text_color = (0, 255, 255)  # Vàng (BGR)
             elif label_model_emotion == 'Sad':
                 text_color = (255, 0, 0)    # Xanh dương (BGR)
-            elif label_model_emotion == 'Angry':
+            elif label_model_emotion == 'Anger':
                 text_color = (0, 0, 255)    # Đỏ (BGR)
             elif label_model_emotion == 'Surprise':
                 text_color = (255, 0, 255)  # Tím (BGR)
+            elif label_model_emotion == 'Neutral':
+                text_color = (128, 128, 128)  # Xám (BGR)
             else:
                 text_color = (255, 255, 255)  # Trắng (BGR)
 
