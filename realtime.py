@@ -23,9 +23,9 @@ print("Loading machine learning models...")
 gender_model = load_model('Gender1.h5', compile=False)  # Mô hình nhận diện giới tính
 emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận diện cảm xúc
 
-# Nhãn cho giới tính và cảm xúc
+# Nhãn cho giới tính và cảm xúc (sử dụng tiếng Anh)
 gender_labels = ['Male', 'Female']
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']  
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Tạo cửa sổ tkinter chính
 root = tk.Tk()
@@ -119,14 +119,14 @@ def update_result_panel():
         gender_value.config(text=result_data['gender'])
         emotion_value.config(text=result_data['emotion'])
         
-        # Thay đổi màu sắc dựa trên cảm xúc
+        # Thay đổi màu sắc dựa trên cảm xúc (sử dụng nhãn tiếng Anh)
         if result_data['emotion'] == 'Happy':
             emotion_value.config(fg="#f1c40f")  # Vàng cho vui vẻ
         elif result_data['emotion'] == 'Sad':
             emotion_value.config(fg="#3498db")  # Xanh dương cho buồn
         elif result_data['emotion'] == 'Angry':
             emotion_value.config(fg="#e74c3c")  # Đỏ cho tức giận
-        elif result_data['emotion'] == 'Surprised':
+        elif result_data['emotion'] == 'Surprise':
             emotion_value.config(fg="#9b59b6")  # Tím cho ngạc nhiên
         else:
             emotion_value.config(fg=TEXT_COLOR)  # Màu mặc định
@@ -183,7 +183,7 @@ def camera_worker():
                 continue
 
             # Tiền xử lý khuôn mặt cho việc dự đoán
-            face_crop = cv2.resize(face_crop, (150, 150))  # Resize về kích thước chuẩn
+            face_crop = cv2.resize(face_crop, (96, 96))  # Sử dụng kích thước mới (96x96)
             face_crop = face_crop.astype("float") / 255.0  # Chuẩn hóa pixel về [0,1]
             face_crop = img_to_array(face_crop)            # Chuyển đổi thành array
             face_crop = np.expand_dims(face_crop, axis=0)  # Thêm batch dimension
@@ -219,14 +219,14 @@ def camera_worker():
             # Tạo nhãn hiển thị trên frame
             label = f"Face #{face_idx+1}: {label_model_gender}, {label_model_emotion}"
             
-            # Chọn màu text dựa vào cảm xúc
+            # Chọn màu text dựa vào cảm xúc (sử dụng nhãn tiếng Anh)
             if label_model_emotion == 'Happy':
                 text_color = (0, 255, 255)  # Vàng (BGR)
             elif label_model_emotion == 'Sad':
                 text_color = (255, 0, 0)    # Xanh dương (BGR)
             elif label_model_emotion == 'Angry':
                 text_color = (0, 0, 255)    # Đỏ (BGR)
-            elif label_model_emotion == 'Surprised':
+            elif label_model_emotion == 'Surprise':
                 text_color = (255, 0, 255)  # Tím (BGR)
             else:
                 text_color = (255, 255, 255)  # Trắng (BGR)
