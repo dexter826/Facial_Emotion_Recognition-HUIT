@@ -11,15 +11,16 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 ### 1. Dataset cho Nhận diện Cảm xúc
 
-**Nguồn**: FER-2013 (Facial Expression Recognition 2013) từ Kaggle
+**Nguồn**: AFFECTNET YOLO Format từ Kaggle
 
-- **Link**: https://www.kaggle.com/datasets/msambare/fer2013
-- **Mô tả**: Bộ dữ liệu chứa khoảng 30,000 ảnh khuôn mặt grayscale kích thước 48x48 pixel
-- **Phân loại**: 7 loại cảm xúc (Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise)
+- **Link**: https://www.kaggle.com/datasets/mouadriali/affectnet-yolo-format
+- **Mô tả**: Bộ dữ liệu chứa ảnh khuôn mặt RGB kích thước 96x96 pixel từ dataset AFFECTNET
+- **Phân loại**: 8 loại cảm xúc (Anger, Contempt, Disgust, Fear, Happy, Neutral, Sad, Surprise)
 - **Cấu trúc**:
-  - Training set: ~28,000 ảnh
-  - Test set: ~7,000 ảnh
-- **Đặc điểm**: Ảnh được thu thập từ nhiều nguồn khác nhau, đa dạng về độ tuổi, giới tính, và điều kiện ánh sáng
+  - Training set: Ảnh trong thư mục train/images
+  - Validation set: Ảnh trong thư mục valid/images
+  - Test set: Ảnh trong thư mục test/images
+- **Đặc điểm**: Ảnh chất lượng cao, đã được tiền xử lý và cắt khuôn mặt, định dạng YOLO
 
 ### 2. Dataset cho Phân loại Giới tính
 
@@ -36,18 +37,17 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 ### 3. Tiền xử lý dữ liệu
 
-#### Cho mô hình Emotion:
+#### Cho mô hình Emotion (AFFECTNET):
 
-- **Resize**: Từ 48x48 → 150x150 pixels
-- **Color conversion**: Grayscale → RGB (duplicate channels)
+- **Input size**: 96x96x3 (RGB) - kích thước gốc của dataset
 - **Normalization**: Pixel values từ [0-255] → [0-1]
-- **Data Augmentation**: Rotation, shift, zoom, flip
+- **Data Augmentation**: Rotation (15°), shift (0.1), zoom (0.1), horizontal flip
 
 #### Cho mô hình Gender:
 
-- **Input size**: 150x150x3 (RGB)
+- **Input size**: 96x96x3 (RGB) - cập nhật để tương thích
 - **Normalization**: Pixel values từ [0-255] → [0-1]
-- **Data Augmentation**: Rotation, shift, zoom, flip
+- **Data Augmentation**: Rotation (20°), shift (0.2), zoom (0.2), horizontal flip
 
 ## Kiến trúc mô hình CNN
 
@@ -56,7 +56,7 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 #### Cấu trúc mạng:
 
 ```
-Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
+Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
 ├── Conv2D(32 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Conv2D(64 filters, 3x3) + ReLU
@@ -66,7 +66,8 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Conv2D(256 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Flatten
-├── Dense(128) + ReLU + Dropout(0.5)
+├── Dense(256) + ReLU + Dropout(0.5)
+├── Dense(128) + ReLU + Dropout(0.3)
 └── Output: Dense(2) + Softmax → [Male, Female] - **AUTO-DETECT CLASSES**
 ```
 
@@ -75,9 +76,7 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 #### Cấu trúc mạng:
 
 ```
-Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
-├── Conv2D(16 filters, 3x3) + ReLU
-├── MaxPooling2D(2x2)
+Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
 ├── Conv2D(32 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Conv2D(64 filters, 3x3) + ReLU
@@ -87,8 +86,9 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Conv2D(256 filters, 3x3) + ReLU
 ├── MaxPooling2D(2x2)
 ├── Flatten
-├── Dense(128) + ReLU + Dropout(0.5)
-└── Output: Dense(7) + Softmax → [Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise]
+├── Dense(256) + ReLU + Dropout(0.5)
+├── Dense(128) + ReLU + Dropout(0.3)
+└── Output: Dense(8) + Softmax → [Anger, Contempt, Disgust, Fear, Happy, Neutral, Sad, Surprise]
 ```
 
 ## Quy trình hoạt động của hệ thống
