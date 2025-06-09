@@ -27,6 +27,7 @@ emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận di�
 # Lưu ý: Thứ tự phải khớp với class indices của dataset
 # Dataset gender: female=0, male=1 (theo thứ tự alphabet)
 gender_labels = ['Female', 'Male']
+# Dataset emotion mới: Angry=0, Happy=1, Neutral=2, Sad=3, Surprise=4 (theo thứ tự alphabet)
 emotion_labels = ['Angry', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Tạo cửa sổ tkinter chính

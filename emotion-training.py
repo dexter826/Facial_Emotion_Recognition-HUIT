@@ -46,18 +46,18 @@ def train_emotion_model():
     """
     print("Kiểm tra thư mục dataset...")
 
-    # Kiểm tra thư mục dataset đã được chuyển đổi
-    train_dir = "dataset/emotion/train_folders_5emotions"
-    valid_dir = "dataset/emotion/valid_folders_5emotions"
+    # Sử dụng thư mục dataset mới với nhãn viết hoa đầu
+    train_dir = "dataset/emotion/train"
+    valid_dir = "dataset/emotion/val"
 
     if not os.path.exists(train_dir):
         print(f"Lỗi: Không tìm thấy thư mục {train_dir}")
-        print("Vui lòng chạy convert_dataset.py trước để chuyển đổi dataset")
+        print("Vui lòng kiểm tra dataset emotion")
         return None, None
 
     if not os.path.exists(valid_dir):
         print(f"Lỗi: Không tìm thấy thư mục {valid_dir}")
-        print("Vui lòng chạy convert_dataset.py trước để chuyển đổi dataset")
+        print("Vui lòng kiểm tra dataset emotion")
         return None, None
 
     print("Tạo data generators...")
@@ -164,7 +164,7 @@ def test_model():
     # Tạo test generator
     test_datagen = ImageDataGenerator(rescale=1.0/255)
     test_generator = test_datagen.flow_from_directory(
-        directory="dataset/emotion/valid_folders_5emotions",
+        directory="dataset/emotion/val",
         target_size=(150, 150),
         batch_size=32,
         class_mode='categorical',
@@ -183,14 +183,19 @@ def test_model():
 
 if __name__ == "__main__":
     print("=== HUẤN LUYỆN MÔ HÌNH NHẬN DIỆN CẢM XÚC ===")
-    print("Sử dụng dataset AFFECTNET YOLO Format với 5 cảm xúc:")
+    print("Sử dụng dataset Emotion với 5 cảm xúc:")
     print("- Angry, Happy, Neutral, Sad, Surprise")
     print("Tương thích với realtime.py\n")
 
-    # Kiểm tra dataset đã được chuyển đổi chưa
-    if not os.path.exists("dataset/emotion/train_folders_5emotions"):
-        print("Lỗi: Dataset chưa được chuyển đổi!")
-        print("Vui lòng chạy lệnh: python convert_dataset.py")
+    # Kiểm tra dataset có tồn tại không
+    if not os.path.exists("dataset/emotion/train"):
+        print("Lỗi: Dataset emotion/train không tồn tại!")
+        print("Vui lòng kiểm tra thư mục dataset/emotion/")
+        exit(1)
+
+    if not os.path.exists("dataset/emotion/val"):
+        print("Lỗi: Dataset emotion/val không tồn tại!")
+        print("Vui lòng kiểm tra thư mục dataset/emotion/")
         exit(1)
 
     # Huấn luyện mô hình
