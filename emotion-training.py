@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.callbacks import EarlyStopping
+import matplotlib.pyplot as plt
 import os
 
 def create_model():
@@ -39,6 +40,52 @@ def create_model():
     model.add(Dense(5, activation='softmax'))
     
     return model
+
+def plot_training_history(history, model_name="Emotion"):
+    """
+    Vẽ biểu đồ accuracy và loss từ lịch sử training
+    """
+    # Tạo figure cho accuracy
+    plt.figure(figsize=(10, 6))
+
+    # Vẽ biểu đồ accuracy
+    plt.plot(history.history['accuracy'], 'b-', label='train', linewidth=2)
+    plt.plot(history.history['val_accuracy'], 'orange', label='validation', linewidth=2)
+    plt.title('model accuracy', fontsize=16, fontweight='bold')
+    plt.xlabel('epochs', fontsize=12)
+    plt.ylabel('accuracy', fontsize=12)
+    plt.legend(fontsize=12)
+    plt.grid(True, alpha=0.3)
+
+    # Lưu biểu đồ accuracy
+    accuracy_filename = f'{model_name.lower()}_model_accuracy.png'
+    plt.tight_layout()
+    plt.savefig(accuracy_filename, dpi=300, bbox_inches='tight')
+    plt.show()
+    plt.close()
+
+    # Tạo figure cho loss
+    plt.figure(figsize=(10, 6))
+
+    # Vẽ biểu đồ loss
+    plt.plot(history.history['loss'], 'b-', label='train', linewidth=2)
+    plt.plot(history.history['val_loss'], 'orange', label='validation', linewidth=2)
+    plt.title('model loss', fontsize=16, fontweight='bold')
+    plt.xlabel('epochs', fontsize=12)
+    plt.ylabel('loss', fontsize=12)
+    plt.legend(fontsize=12)
+    plt.grid(True, alpha=0.3)
+
+    # Lưu biểu đồ loss
+    loss_filename = f'{model_name.lower()}_model_loss.png'
+    plt.tight_layout()
+    plt.savefig(loss_filename, dpi=300, bbox_inches='tight')
+    plt.show()
+    plt.close()
+
+    print(f"Biểu đồ đã được lưu:")
+    print(f"- {accuracy_filename}")
+    print(f"- {loss_filename}")
 
 def train_emotion_model():
     """
@@ -202,12 +249,17 @@ if __name__ == "__main__":
     model, history = train_emotion_model()
 
     if model is not None and history is not None:
+        # Vẽ biểu đồ training history
+        print("\nTạo biểu đồ training history...")
+        plot_training_history(history, "Emotion")
+
         # Kiểm tra mô hình
         test_accuracy, test_loss = test_model()
 
         if test_accuracy is not None:
             print("\n=== HOÀN THÀNH ===")
             print("Mô hình đã được lưu vào Emotion1.h5")
+            print("Biểu đồ training đã được tạo")
             print("Có thể sử dụng với realtime.py")
         else:
             print("\nLỗi trong quá trình kiểm tra mô hình")
