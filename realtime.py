@@ -25,7 +25,7 @@ emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận di�
 
 # Nhãn cho giới tính và cảm xúc
 gender_labels = ['Male', 'Female']
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']  # Updated to use all 7 FER-2013 emotions
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']  
 
 # Tạo cửa sổ tkinter chính
 root = tk.Tk()

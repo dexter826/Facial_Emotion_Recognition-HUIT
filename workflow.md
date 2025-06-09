@@ -15,7 +15,7 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 - **Link**: https://www.kaggle.com/datasets/msambare/fer2013
 - **Mô tả**: Bộ dữ liệu chứa khoảng 30,000 ảnh khuôn mặt grayscale kích thước 48x48 pixel
-- **Phân loại**: 7 loại cảm xúc (Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise) - **SỬ DỤNG ĐẦY ĐỦ**
+- **Phân loại**: 7 loại cảm xúc (Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise)
 - **Cấu trúc**:
   - Training set: ~28,000 ảnh
   - Test set: ~7,000 ảnh
@@ -88,7 +88,7 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── MaxPooling2D(2x2)
 ├── Flatten
 ├── Dense(128) + ReLU + Dropout(0.5)
-└── Output: Dense(7) + Softmax → [Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise] - **ĐẦY ĐỦ 7 EMOTIONS**
+└── Output: Dense(7) + Softmax → [Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise]
 ```
 
 ## Quy trình hoạt động của hệ thống
@@ -133,7 +133,7 @@ emotion_model = load_model('Emotion1.h5', compile=False)
 
 # Define class labels
 gender_labels = ['Male', 'Female']
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']  # Full FER-2013 emotions
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 ```
 
 #### 2.2 Quy trình xử lý frame từ camera

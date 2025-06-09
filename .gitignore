@@ -1,0 +1,5 @@
+#không tải lên dataset vào github
+dataset/
+
+#vscode
+.vscode/
