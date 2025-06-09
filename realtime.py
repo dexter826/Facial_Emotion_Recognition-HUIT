@@ -23,11 +23,9 @@ print("Loading machine learning models...")
 gender_model = load_model('Gender1.h5', compile=False)  # Mô hình nhận diện giới tính
 emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận diện cảm xúc
 
-# Nhãn cho giới tính và cảm xúc (sử dụng tiếng Anh)
-# Lưu ý: Thứ tự phải khớp với class_indices của TensorFlow (female=0, male=1)
-gender_labels = ['female', 'male']  # Khớp với class_indices trong model
-# Cập nhật cho dataset AFFECTNET với 5 cảm xúc chính
-emotion_labels = ['Anger', 'Happy', 'Neutral', 'Sad', 'Surprise']
+# Nhãn cho giới tính và cảm xúc
+gender_labels = ['Male', 'Female']
+emotion_labels = ['Neutral', 'Happy', 'Sad', 'Surprised', 'Angry']
 
 # Tạo cửa sổ tkinter chính
 root = tk.Tk()
@@ -78,11 +76,11 @@ def use_camera():
     is_running = True
     start_button.config(state="disabled")  # Vô hiệu hóa nút bắt đầu
     stop_button.config(state="normal")     # Kích hoạt nút dừng
-    
+
     # Khởi tạo camera nếu chưa có
     if capture is None:
         capture = cv2.VideoCapture(0)
-        
+
     # Kiểm tra xem camera có mở thành công không
     if not capture.isOpened():
         status_label.config(text="Lỗi: Không thể mở camera!")
@@ -90,12 +88,12 @@ def use_camera():
         start_button.config(state="normal")
         stop_button.config(state="disabled")
         return
-    
+
     # Tạo thread riêng cho việc xử lý camera
     worker_thread = threading.Thread(target=camera_worker)
     worker_thread.daemon = True
     worker_thread.start()
-    
+
 def quit_program():
     """Hàm thoát chương trình với xác nhận"""
     answer = messagebox.askyesno("Thoát", "Bạn có muốn thoát khỏi chương trình?")
@@ -112,6 +110,7 @@ def cancel_feed():
     is_running = False
     start_button.config(state="normal")    # Kích hoạt lại nút bắt đầu
     stop_button.config(state="disabled")   # Vô hiệu hóa nút dừng
+
     status_label.config(text="Đã dừng camera")
 
 def update_result_panel():
@@ -120,30 +119,28 @@ def update_result_panel():
         # Cập nhật hiển thị giới tính và cảm xúc
         gender_value.config(text=result_data['gender'])
         emotion_value.config(text=result_data['emotion'])
-        
-        # Thay đổi màu sắc dựa trên cảm xúc (sử dụng nhãn tiếng Anh)
+
+        # Thay đổi màu sắc dựa trên cảm xúc
         if result_data['emotion'] == 'Happy':
             emotion_value.config(fg="#f1c40f")  # Vàng cho vui vẻ
         elif result_data['emotion'] == 'Sad':
             emotion_value.config(fg="#3498db")  # Xanh dương cho buồn
-        elif result_data['emotion'] == 'Anger':
+        elif result_data['emotion'] == 'Angry':
             emotion_value.config(fg="#e74c3c")  # Đỏ cho tức giận
-        elif result_data['emotion'] == 'Surprise':
+        elif result_data['emotion'] == 'Surprised':
             emotion_value.config(fg="#9b59b6")  # Tím cho ngạc nhiên
-        elif result_data['emotion'] == 'Neutral':
-            emotion_value.config(fg="#95a5a6")  # Xám cho bình thường
         else:
             emotion_value.config(fg=TEXT_COLOR)  # Màu mặc định
-            
+
         # Cập nhật thanh tiến trình độ tin cậy
         confidence_progress['value'] = result_data['confidence'] * 100
-        
+
 def camera_worker():
     """Hàm worker chính để xử lý camera và phân tích khuôn mặt"""
     global is_running, result_data, capture
-    
+
     status_label.config(text="Camera đang hoạt động...")
-    
+
     while is_running:
         # Đọc frame từ camera
         ret, frame = capture.read()
@@ -153,11 +150,11 @@ def camera_worker():
 
         # Phát hiện khuôn mặt trong frame
         faces, confidences = cvlib.detect_face(frame)
-        
+
         # Vẽ khung phân tích xung quanh toàn bộ frame
         frame_height, frame_width = frame.shape[:2]
         cv2.rectangle(frame, (10, 10), (frame_width-10, frame_height-10), (50, 50, 50), 2)
-        
+
         # Thêm thông tin thời gian lên frame
         current_time = cv2.getTickCount() / cv2.getTickFrequency()
         cv2.putText(frame, f"Time: {current_time:.2f}s", 
@@ -175,7 +172,7 @@ def camera_worker():
 
             # Vẽ khung chữ nhật xung quanh khuôn mặt
             cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
-            
+
             # Thêm khung nền cho thông tin text
             cv2.rectangle(frame, (startX, endY+5), (endX, endY+30), (0, 0, 0), -1)
 
@@ -187,7 +184,7 @@ def camera_worker():
                 continue
 
             # Tiền xử lý khuôn mặt cho việc dự đoán
-            face_crop = cv2.resize(face_crop, (150, 150))  # Sử dụng kích thước 150x150
+            face_crop = cv2.resize(face_crop, (150, 150))  # Resize về kích thước chuẩn
             face_crop = face_crop.astype("float") / 255.0  # Chuẩn hóa pixel về [0,1]
             face_crop = img_to_array(face_crop)            # Chuyển đổi thành array
             face_crop = np.expand_dims(face_crop, axis=0)  # Thêm batch dimension
@@ -199,7 +196,7 @@ def camera_worker():
             conf_model_gender = gender_model.predict(face_crop)[0]
             idx_model_gender = np.argmax(conf_model_gender)
             label_model_gender = gender_labels[idx_model_gender]
-            
+
             # Dự đoán cảm xúc
             conf_model_emotion = emotion_model.predict(face_crop)[0]
             idx_model_emotion = np.argmax(conf_model_emotion)
@@ -216,24 +213,22 @@ def camera_worker():
                 result_data['emotion'] = label_model_emotion
                 result_data['confidence'] = max(conf_model_gender[idx_model_gender], 
                                                conf_model_emotion[idx_model_emotion])
-                
+
                 # Cập nhật bảng kết quả trên giao diện
                 root.after(100, update_result_panel)
 
             # Tạo nhãn hiển thị trên frame
             label = f"Face #{face_idx+1}: {label_model_gender}, {label_model_emotion}"
-            
-            # Chọn màu text dựa vào cảm xúc (sử dụng nhãn tiếng Anh)
+
+            # Chọn màu text dựa vào cảm xúc
             if label_model_emotion == 'Happy':
                 text_color = (0, 255, 255)  # Vàng (BGR)
             elif label_model_emotion == 'Sad':
                 text_color = (255, 0, 0)    # Xanh dương (BGR)
-            elif label_model_emotion == 'Anger':
+            elif label_model_emotion == 'Angry':
                 text_color = (0, 0, 255)    # Đỏ (BGR)
-            elif label_model_emotion == 'Surprise':
+            elif label_model_emotion == 'Surprised':
                 text_color = (255, 0, 255)  # Tím (BGR)
-            elif label_model_emotion == 'Neutral':
-                text_color = (128, 128, 128)  # Xám (BGR)
             else:
                 text_color = (255, 255, 255)  # Trắng (BGR)
 
@@ -250,16 +245,16 @@ def camera_worker():
         # Chuyển đổi frame từ BGR (OpenCV) sang RGB (PIL) và hiển thị
         try:
             image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            
+
             # Tính toán tỷ lệ để fit vào khung hiển thị
             display_width = camera_frame.winfo_width()
             display_height = camera_frame.winfo_height()
-            
+
             if display_width > 0 and display_height > 0:
                 # Tính tỷ lệ scaling
                 img_ratio = frame_width / frame_height
                 display_ratio = display_width / display_height
-                
+
                 if display_ratio > img_ratio:
                     # Chiều cao bị giới hạn
                     new_height = display_height
@@ -268,7 +263,7 @@ def camera_worker():
                     # Chiều rộng bị giới hạn
                     new_width = display_width
                     new_height = int(new_width / img_ratio)
-                    
+
                 # Resize ảnh với chất lượng cao
                 resize_method = Image.LANCZOS if hasattr(Image, 'LANCZOS') else Image.ANTIALIAS
                 image = image.resize((new_width, new_height), resize_method)
@@ -306,6 +301,7 @@ header_frame.pack(fill=X)
 try:
     logo_img = Image.open('img/logo_huit.png')
     logo_size = min(60, logo_img.width, logo_img.height)
+
     resize_method = Image.LANCZOS if hasattr(Image, 'LANCZOS') else Image.ANTIALIAS
     logo_img = logo_img.resize((logo_size, logo_size), resize_method)
     logo_photo = ImageTk.PhotoImage(logo_img)
@@ -346,6 +342,7 @@ camera_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 10))
 # Thiết lập kích thước cho khung camera
 camera_frame.update()
 max_height = int(screen_height * 0.6)  # Giới hạn chiều cao
+
 camera_frame.configure(height=max_height)
 camera_frame.pack_propagate(False)  # Ngăn tự động thay đổi kích thước
 

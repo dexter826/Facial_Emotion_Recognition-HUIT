@@ -13,7 +13,7 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 **Nguồn**: AFFECTNET YOLO Format từ Kaggle
 
-- **Link**: https://www.kaggle.com/datasets/mouadriali/affectnet-yolo-format
+- **Link**: https://www.kaggle.com/datasets/fatihkgg/affectnet-yolo-format/data
 - **Mô tả**: Bộ dữ liệu chứa ảnh khuôn mặt RGB kích thước 96x96 pixel từ dataset AFFECTNET
 - **Phân loại**: 5 loại cảm xúc chính (Anger, Happy, Neutral, Sad, Surprise)
 - **Cấu trúc**:
