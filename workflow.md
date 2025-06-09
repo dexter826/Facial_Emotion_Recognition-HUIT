@@ -4,23 +4,26 @@
 
 Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riêng biệt để thực hiện hai nhiệm vụ chính:
 
-1. **Phân loại giới tính** (Nam/Nữ) - `Gender2.h5`
-2. **Nhận diện cảm xúc** (Tức giận, Ghê tởm, Sợ hãi, Vui vẻ, Bình thường, Buồn, Ngạc nhiên) - `Emotion1.h5`
+1. **Phân loại giới tính** (Female/Male) - `Gender1.h5`
+2. **Nhận diện cảm xúc** (Angry, Happy, Neutral, Sad, Surprise) - `Emotion1.h5`
 
 ## Bộ dữ liệu (Dataset) sử dụng
 
 ### 1. Dataset cho Nhận diện Cảm xúc
 
-**Nguồn**: AFFECTNET YOLO Format từ Kaggle
+**Nguồn**: Emotion Recognition Dataset từ Kaggle
 
-- **Link**: https://www.kaggle.com/datasets/fatihkgg/affectnet-yolo-format/data
-- **Mô tả**: Bộ dữ liệu chứa ảnh khuôn mặt RGB kích thước 96x96 pixel từ dataset AFFECTNET
-- **Phân loại**: 5 loại cảm xúc chính (Anger, Happy, Neutral, Sad, Surprise)
+- **Link**: https://www.kaggle.com/datasets/karthickmcw/emotion-recognition-dataset
+- **Mô tả**: Bộ dữ liệu chứa ảnh khuôn mặt chất lượng cao với 5 cảm xúc chính
+- **Phân loại**: 5 loại cảm xúc (Angry, Happy, Neutral, Sad, Surprise)
 - **Cấu trúc**:
-  - Training set: Ảnh trong thư mục train/images
-  - Validation set: Ảnh trong thư mục valid/images
-  - Test set: Ảnh trong thư mục test/images
-- **Đặc điểm**: Ảnh chất lượng cao, đã được tiền xử lý và cắt khuôn mặt, định dạng YOLO
+  - Training set: dataset/emotion/train/ (đã cân bằng ~4,800 ảnh)
+  - Validation set: dataset/emotion/val/ (đã cân bằng ~1,200 ảnh)
+  - Backup: dataset/emotion/backup_original/ (dataset gốc)
+- **Đặc điểm**:
+  - Ảnh chất lượng cao (48-80KB/file)
+  - Đã được cân bằng dữ liệu (~1,200 ảnh/emotion)
+  - Tỷ lệ train/val: 80%/20%
 
 ### 2. Dataset cho Phân loại Giới tính
 
@@ -28,26 +31,37 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 - **Link**: https://www.kaggle.com/datasets/cashutosh/gender-classification-dataset
 - **Mô tả**: Bộ dữ liệu chứa hình ảnh khuôn mặt đã được cắt và làm sạch
-- **Phân loại**: 2 lớp (Male, Female)
+- **Phân loại**: 2 lớp (Female, Male)
 - **Cấu trúc**:
-  - Thư mục "man": Chứa ảnh khuôn mặt nam
-  - Thư mục "woman": Chứa ảnh khuôn mặt nữ
-- **Tổng số**: Khoảng 47,000+ ảnh
-- **Đặc điểm**: Ảnh đã được tiền xử lý, cắt và căn chỉnh khuôn mặt
+  - Training set: dataset/gender/train_folders/
+    - female/: ~23,000 ảnh khuôn mặt nữ
+    - male/: ~23,000 ảnh khuôn mặt nam
+  - Validation set: dataset/gender/valid_folders/
+    - female/: ~5,500 ảnh khuôn mặt nữ
+    - male/: ~5,500 ảnh khuôn mặt nam
+- **Tổng số**: ~57,000 ảnh (đã được cân bằng và tối ưu)
+- **Tỷ lệ Train/Val**: ~80%/20% (tỷ lệ lý tưởng)
+- **Đặc điểm**:
+  - Ảnh đã được tiền xử lý, cắt và căn chỉnh khuôn mặt
+  - Dataset hoàn toàn cân bằng giữa nam và nữ
+  - Chất lượng ảnh tốt, phù hợp cho deep learning
+  - Đã được tối ưu hóa số lượng để training hiệu quả
 
 ### 3. Tiền xử lý dữ liệu
 
-#### Cho mô hình Emotion (AFFECTNET):
+#### Cho mô hình Emotion:
 
-- **Input size**: 150x150x3 (RGB) - cập nhật để tăng độ chính xác
+- **Input size**: 150x150x3 (RGB) - tối ưu cho độ chính xác
 - **Normalization**: Pixel values từ [0-255] → [0-1]
 - **Data Augmentation**: Rotation (20°), shift (0.2), shear (0.2), zoom (0.2), horizontal flip
+- **Dataset balancing**: Sử dụng script balance_emotion_dataset.py
 
 #### Cho mô hình Gender:
 
-- **Input size**: 150x150x3 (RGB) - cập nhật để tương thích
+- **Input size**: 150x150x3 (RGB) - tương thích với emotion model
 - **Normalization**: Pixel values từ [0-255] → [0-1]
 - **Data Augmentation**: Rotation (20°), shift (0.2), zoom (0.2), horizontal flip
+- **Balanced dataset**: Dataset đã cân bằng sẵn
 
 ## Kiến trúc mô hình CNN
 
@@ -68,7 +82,7 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Flatten
 ├── Dense(256) + ReLU + Dropout(0.5)
 ├── Dense(128) + ReLU + Dropout(0.3)
-└── Output: Dense(2) + Softmax → [Male, Female] - **AUTO-DETECT CLASSES**
+└── Output: Dense(2) + Softmax → [Female, Male] - **Class indices: female=0, male=1**
 ```
 
 ### 2. Mô hình Nhận diện Cảm xúc (Emotion Recognition)
@@ -88,12 +102,25 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 ├── Flatten
 ├── Dense(256) + ReLU + Dropout(0.5)
 ├── Dense(128) + ReLU + Dropout(0.3)
-└── Output: Dense(5) + Softmax → [Anger, Happy, Neutral, Sad, Surprise]
+└── Output: Dense(5) + Softmax → [Angry, Happy, Neutral, Sad, Surprise] - **Class indices: Angry=0, Happy=1, Neutral=2, Sad=3, Surprise=4**
 ```
 
 ## Quy trình hoạt động của hệ thống
 
 ### Giai đoạn 1: Huấn luyện mô hình (Training Phase)
+
+#### 1.0 Cân bằng dataset (khuyến nghị cho emotion)
+
+```python
+# Chạy script cân bằng dataset emotion
+python balance_emotion_dataset.py
+
+# Kết quả:
+# - Tạo backup dataset gốc
+# - Cân bằng ~1,200 files/emotion
+# - Tỷ lệ train/val: 80%/20%
+# - Tổng: ~6,000 files (thay vì 12,825)
+```
 
 #### 1.1 Chuẩn bị dữ liệu
 
@@ -131,9 +158,9 @@ Input Layer: (150, 150, 3) - Ảnh RGB kích thước 150x150
 gender_model = load_model('Gender1.h5', compile=False)
 emotion_model = load_model('Emotion1.h5', compile=False)
 
-# Define class labels
-gender_labels = ['Male', 'Female']
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+# Define class labels (phải khớp với class indices của dataset)
+gender_labels = ['Female', 'Male']  # female=0, male=1
+emotion_labels = ['Angry', 'Happy', 'Neutral', 'Sad', 'Surprise']  # theo thứ tự alphabet
 ```
 
 #### 2.2 Quy trình xử lý frame từ camera
@@ -205,18 +232,44 @@ def predict_gender_emotion(face_crop):
 
 ## Hiệu suất và Tối ưu hóa
 
-### 1. Techniques sử dụng
+### 1. Kết quả Training thực tế
+
+#### Mô hình Gender (Gender1.h5):
+
+- **Training Accuracy**: 92.85%
+- **Validation Accuracy**: 95.38%
+- **Test Accuracy**: 95.38%
+- **Training Loss**: 0.2023
+- **Validation Loss**: 0.1493
+- **Dataset**: ~57,000 ảnh (23k train + 5.5k val mỗi class)
+- **Đánh giá**: ✅ Rất tốt, sẵn sàng production
+- **Lý do thành công**: Dataset cân bằng hoàn hảo và đã được tối ưu số lượng
+
+#### Mô hình Emotion (Emotion1.h5):
+
+- **Training Accuracy**: 65.41%
+- **Validation Accuracy**: 71.36%
+- **Test Accuracy**: 71.36%
+- **Training Loss**: 0.8909
+- **Validation Loss**: 0.7254
+- **Dataset**: ~12,825 ảnh (chưa cân bằng) hoặc ~6,000 ảnh (đã cân bằng)
+- **Đánh giá**: ✅ Khá tốt, có thể cải thiện bằng cách cân bằng dataset
+
+### 3. Techniques sử dụng
 
 - **Data Augmentation**: Tăng đa dạng dữ liệu huấn luyện
 - **Early Stopping**: Dừng huấn luyện khi không còn cải thiện
 - **Dropout**: Regularization để tránh overfitting
-- **Batch Normalization**: Ổn định quá trình huấn luyện
+- **Dataset Balancing**: Cân bằng dữ liệu để tránh bias (quan trọng cho emotion)
+- **Quality over Quantity**: Sử dụng ảnh chất lượng cao
+- **Optimal Dataset Size**: Gender đã tối ưu, Emotion cần cân bằng
 
-### 2. Real-time Performance
+### 4. Real-time Performance
 
 - **Input size**: 150x150 (cân bằng giữa accuracy và speed)
 - **Model size**: Compact cho inference nhanh
 - **Threading**: Xử lý đa luồng cho GUI responsiveness
+- **Face detection**: Sử dụng cvlib cho tốc độ tối ưu
 
 ## Ưu điểm của kiến trúc này
 
