@@ -24,11 +24,8 @@ gender_model = load_model('Gender1.h5', compile=False)  # Mô hình nhận diệ
 emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận diện cảm xúc
 
 # Nhãn cho giới tính và cảm xúc
-# Lưu ý: Thứ tự phải khớp với class indices của dataset
-# Dataset gender: female=0, male=1 (theo thứ tự alphabet)
-gender_labels = ['Female', 'Male']
-# Dataset emotion mới: Angry=0, Happy=1, Neutral=2, Sad=3, Surprise=4 (theo thứ tự alphabet)
-emotion_labels = ['Angry', 'Happy', 'Neutral', 'Sad', 'Surprise']
+gender_labels = ['Male', 'Female']
+emotion_labels = ['Neutral', 'Happy', 'Sad', 'Surprised', 'Angry']
 
 # Tạo cửa sổ tkinter chính
 root = tk.Tk()
@@ -511,7 +508,7 @@ footer_text.pack(pady=5)
 for widget in [button_frame]:
     widget.pack_configure(anchor=CENTER)
 
-# Xử lý sự kiện đóng cửa sổ
+# Xử lý sự kiện đóng cửa sổAdd commentMore actions
 root.protocol("WM_DELETE_WINDOW", quit_program)
 
 # Bắt đầu vòng lặp chính của ứng dụng
