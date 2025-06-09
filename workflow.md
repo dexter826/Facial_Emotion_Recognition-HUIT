@@ -15,7 +15,7 @@ Dự án này sử dụng hai mô hình CNN (Convolutional Neural Network) riên
 
 - **Link**: https://www.kaggle.com/datasets/mouadriali/affectnet-yolo-format
 - **Mô tả**: Bộ dữ liệu chứa ảnh khuôn mặt RGB kích thước 96x96 pixel từ dataset AFFECTNET
-- **Phân loại**: 8 loại cảm xúc (Anger, Contempt, Disgust, Fear, Happy, Neutral, Sad, Surprise)
+- **Phân loại**: 5 loại cảm xúc chính (Anger, Happy, Neutral, Sad, Surprise)
 - **Cấu trúc**:
   - Training set: Ảnh trong thư mục train/images
   - Validation set: Ảnh trong thư mục valid/images
@@ -88,7 +88,7 @@ Input Layer: (96, 96, 3) - Ảnh RGB kích thước 96x96
 ├── Flatten
 ├── Dense(256) + ReLU + Dropout(0.5)
 ├── Dense(128) + ReLU + Dropout(0.3)
-└── Output: Dense(8) + Softmax → [Anger, Contempt, Disgust, Fear, Happy, Neutral, Sad, Surprise]
+└── Output: Dense(5) + Softmax → [Anger, Happy, Neutral, Sad, Surprise]
 ```
 
 ## Quy trình hoạt động của hệ thống

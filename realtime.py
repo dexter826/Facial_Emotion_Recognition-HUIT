@@ -26,8 +26,8 @@ emotion_model = load_model('Emotion1.h5', compile=False)  # Mô hình nhận di�
 # Nhãn cho giới tính và cảm xúc (sử dụng tiếng Anh)
 # Lưu ý: Thứ tự phải khớp với class_indices của TensorFlow (female=0, male=1)
 gender_labels = ['Female', 'Male']
-# Cập nhật cho dataset AFFECTNET với 8 cảm xúc
-emotion_labels = ['Anger', 'Contempt', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+# Cập nhật cho dataset AFFECTNET với 5 cảm xúc chính
+emotion_labels = ['Anger', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Tạo cửa sổ tkinter chính
 root = tk.Tk()
